@@ -23,6 +23,8 @@ target 'bitLabs_ios' do
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
+
+
   target 'bitLabs_iosTests' do
     inherit! :complete
     # Pods for testing

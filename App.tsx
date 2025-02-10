@@ -1,118 +1,64 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
+import React, { useEffect, useState } from 'react';
+import { View, Button, Text, Image } from 'react-native';
+import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
 
-import React from 'react';
-import type {PropsWithChildren} from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
+const GoogleSignInComponent = () => {
+  const [userInfo, setUserInfo] = useState<any>(null);  // To hold user information
+  const [isSignedIn, setIsSignedIn] = useState(false);  // To track sign-in status
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+  useEffect(() => {
+    GoogleSignin.configure({
+      iosClientId: '257212616645-6o230q4dmtk587hjtmo00efqal9407is.apps.googleusercontent.com', 
+    });
+  }, []);
 
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
+  const signIn = async () => {
+    try {
+      await GoogleSignin.hasPlayServices();
+      const user = await GoogleSignin.signIn();
+      console.log('User Info:', user);
+      setUserInfo(user);  // Set the user info after successful sign-in
+      setIsSignedIn(true);  // Update sign-in status
+    } catch (error:any) {
+      if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+        console.log('User cancelled the login');
+      } else if (error.code === statusCodes.IN_PROGRESS) {
+        console.log('Sign-In in progress');
+      } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+        console.log('Play Services are not available');
+      } else {
+        console.error('Google Sign-In Error:', error);
+      }
+    }
+  };
 
-function Section({children, title}: SectionProps): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-}
-
-function App(): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
+  const signOut = async () => {
+    try {
+      await GoogleSignin.revokeAccess();
+      await GoogleSignin.signOut();
+      console.log('User signed out');
+      setIsSignedIn(false);  // Update sign-out status
+      setUserInfo(null);  // Clear user info
+    } catch (error) {
+      console.error('Sign out error:', error);
+    }
   };
 
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      {isSignedIn ? (
+        <View style={{ alignItems: 'center' }}>
+          <Text>Welcome, {userInfo?.data.user?.name}!</Text>
+          <Image source={{ uri: userInfo?.datauser?.photo }} style={{ width: 100, height: 100, borderRadius: 50, marginTop: 10 }} />
+          <Button title="Sign Out" onPress={signOut} />
         </View>
-      </ScrollView>
-    </SafeAreaView>
+      ) : (
+        <View>
+          <Button title="Sign In with Google" onPress={signIn} />
+        </View>
+      )}
+    </View>
   );
-}
+};
 
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-});
-
-export default App;
+export default GoogleSignInComponent;
