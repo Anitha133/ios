@@ -1,11 +1,9 @@
 import React, { createContext, useState, useEffect, useContext, ReactNode } from 'react';
-import { View } from "react-native";
 import * as Keychain from 'react-native-keychain';
-import { handleLogin ,handleLoginWithEmail} from '../services/login/Authservice';
-import { AuthResponse } from '../services/login/Authservice';
-import { showToast } from '../services/login/ToastService';
+import { handleLogin ,handleLoginWithEmail,AuthResponse } from '../services/login/Authservice';
+import { showToast } from '@services/login/ToastService';
 import LogoutModal from '../screens/LandingPage/LogoutModel'; // Import the modal component
-
+import { setLogoutHandler,removeInterceptors } from '@services/login/ApiClient';
 
 interface AuthContextProps {
   isAuthenticated: boolean;
@@ -21,10 +19,9 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [authData, setAuthData] = useState<{ token: string; id: number; email: string } | null>(null);
   const [isLogoutModalVisible, setLogoutModalVisible] = useState(false);
-  
-  useEffect(() => {
-    checkAuth();
-  }, []);
+  useEffect(()=>{
+    setLogoutHandler(handleLogout);
+  },[])
 
   const login = async (loginemail: string, loginpassword: string): Promise<AuthResponse> => {
     const response = await handleLogin(loginemail, loginpassword);
@@ -59,12 +56,10 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
 
 
   const showLogoutModal = () => {
-    console.log("Opening Logout Modal");
     setLogoutModalVisible(true);
   };
-  
+
   const hideLogoutModal = () => {
-    console.log("Closing Logout Modal");
     setLogoutModalVisible(false);
   };
 
@@ -75,14 +70,14 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     setIsAuthenticated(false);
     showToast('success', 'Logout Successful');
     hideLogoutModal();
+    removeInterceptors();
   };
-  
 
   const checkAuth = async () => {
     try {
       const userDetails = await Keychain.getGenericPassword({ service: 'userDetails' });
       const authToken = await Keychain.getGenericPassword({ service: 'authToken' });
-    
+
       if (userDetails && authToken) {
         const parsedUserDetails = JSON.parse(userDetails.password);  // Parse user details stored as JSON
         setAuthData({
@@ -102,17 +97,18 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     }
   };
   
+  useEffect(() => {
+    checkAuth();
+  }, []);
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, authData, login,Glogin, logout: showLogoutModal }}>
+    <AuthContext.Provider value={{ isAuthenticated, authData, login,Glogin, logout: showLogoutModal , }}>
       {children}
-     
-  <LogoutModal
-    visible={isLogoutModalVisible}
-    onCancel={hideLogoutModal}
-    onConfirm={handleLogout}
-  />
-
+      <LogoutModal
+        visible={isLogoutModalVisible}
+        onCancel={hideLogoutModal}
+        onConfirm={handleLogout}
+      />
     </AuthContext.Provider>
   );
 };
@@ -123,9 +119,9 @@ const useAuth = () => {
 
   const { authData, ...rest } = context;
 
-  const userId = authData?.id || null; // Extract userId from authData
-  const userToken = authData?.token || null; // Extract userToken from authData
-  const userEmail = authData?.email || null;
+  const userId = authData?.id ?? null; // Extract userId from authData
+  const userToken = authData?.token ?? null; // Extract userToken from authData
+  const userEmail = authData?.email ?? null;
   return { ...rest, userId, userToken, userEmail };
 };
 

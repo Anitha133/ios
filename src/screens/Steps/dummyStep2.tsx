@@ -5,14 +5,11 @@ import {
   TextInput,
   StyleSheet,
   Image,
-  KeyboardAvoidingView,
   ScrollView,
   TouchableOpacity,
 } from 'react-native';
-import ProgressBar from '../../components/progessBar/ProgressBar';
- 
+import ProgressBar from '@components/progessBar/ProgressBar';
 import DropDownPicker from 'react-native-dropdown-picker';
-import { useFocusEffect } from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
  
@@ -557,6 +554,7 @@ const styles = StyleSheet.create({
     fontFamily: 'PlusJakartaSans-Medium',
     fontSize: 14,
   },
+
 });
  
 export default Dummystep2;

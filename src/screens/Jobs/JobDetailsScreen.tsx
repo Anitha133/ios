@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import {
   StyleSheet,
   Text,
@@ -7,81 +7,28 @@ import {
   ScrollView,
   ActivityIndicator,
   TouchableOpacity,
-  Dimensions
-
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import axios from 'axios';
-import { useRoute } from '@react-navigation/native';
-import { useAuth } from '../../context/Authcontext';
-import { RouteProp } from '@react-navigation/native';
-import { RootStackParamList } from '../../../New';
+import { useAuth } from '@context/Authcontext';
+import { RouteProp, useNavigation } from '@react-navigation/native';
+import { RootStackParamList } from '@models/model';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { useNavigation } from '@react-navigation/native';
-import { JobData } from '../../models/Jobs/ApplyJobmodel';
-import ViewJobDetails from './ViewJobDetails';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { applyJob } from '../../services/Jobs/JobDetails';
-import API_BASE_URL from '../../services/API_Service';
-const { width,height } = Dimensions.get('window');
+
+import { useJobDetailsViewModel } from '@viewmodel/jobs/JobDetailsViewModel';
+
 
 type JobDetailsScreenProps = {
   route: RouteProp<RootStackParamList, 'JobDetailsScreen'>;
 };
 
-
-
 const JobDetailsScreen: React.FC<JobDetailsScreenProps> = ({ route }) => {
   const { job } = route.params;
   const { userToken } = useAuth();
-  const [jobStatus, setJobStatus] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { jobStatus, loading, formatDate, formatDates } = useJobDetailsViewModel(job, userToken ?? '');
 
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList, 'JobDetails'>>();
-  useEffect(() => {
-    const fetchJobStatus = async () => {
-      try {
-        const response = await axios.get(
-          `${API_BASE_URL}/applyjob/recruiters/applyjob-status-history/${job.applyJobId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${userToken}`,
-            },
-          }
-        );
 
-        const body = response.data;
-        setLoading(false);
-
-        if (Array.isArray(body) && body.length > 0) {
-          const filteredStatuses = body.filter(
-            status => !['screening', 'interview', 'selected', 'rejected'].includes(status.status)
-          );
-          const reversedStatuses = filteredStatuses.reverse();
-          setJobStatus(reversedStatuses);
-        }
-      } catch (error) {
-        console.error('Error fetching job status:', error);
-        setLoading(false);
-      }
-    };
-
-    fetchJobStatus();
-  }, [job, userToken]);
-
-  const monthNames = [
-    'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December'
-  ];
-  const formatDate = (dateArray: [number, number, number]): string => {
-    const [year, month, day] = dateArray;
-    return `${monthNames[month - 1]} ${day}, ${year}`;
-  };
-  const formatDates = (dateArray: [number, number, number]): string => {
-    const [year, month, day] = dateArray;
-    const date = new Date(year, month - 1, day);
-    return new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).format(date);
-  };
   return (
     <View style={{ flex: 1 }}>
       <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 80 }}>
@@ -112,7 +59,6 @@ const JobDetailsScreen: React.FC<JobDetailsScreenProps> = ({ route }) => {
               </View>
 
               <View style={{ flexDirection: 'row', justifyContent: 'flex-start', flexWrap: 'nowrap', alignItems: 'center', marginLeft: 10 }}>
-
                 <View style={{ flexDirection: 'row', alignItems: 'center', marginRight: 10 }}>
                   <Image
                     source={require('../../assests/Images/rat/exp.png')}
@@ -125,14 +71,14 @@ const JobDetailsScreen: React.FC<JobDetailsScreenProps> = ({ route }) => {
                 </View>
 
                 <View style={{ flexDirection: 'row', alignItems: 'center', marginRight: 10, marginTop: 1 }}>
-                  <View style={{ flexDirection: 'row', alignItems: 'center', }}>
-                    <Text style={{ fontSize: 14 }}>₹ </Text>
+                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 13 }}>{"\u20B9"}</Text>
                     <Text style={styles.ovalText}>{job.minSalary.toFixed(2)} -  {job.maxSalary.toFixed(2)} LPA  </Text>
                     <Text style={{ color: '#E2E2E2' }}>  |</Text>
                   </View>
                 </View>
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                  <Text style={styles.ovalText}>{job.employeeType}</Text>
+                  <Text style={styles.ovalText }>{job.employeeType}</Text>
                 </View>
               </View>
               <View>
@@ -145,20 +91,18 @@ const JobDetailsScreen: React.FC<JobDetailsScreenProps> = ({ route }) => {
 
               {jobStatus.length > 0 ? (
                 <View style={styles.statusTable}>
-                  {jobStatus.map((status, index) => (
-                    <View key={index} style={styles.statusRow}>
+                  {jobStatus.map((status) => (
+                    <View key={status.id} style={styles.statusRow}>
                       <Text style={styles.statusDate}>
                         {formatDates(status.changeDate)}
                       </Text>
                       <View style={styles.iconWrapper}>
                         {status.status === 'Completed' ? (
                           <Icon name="check-circle" size={24} color="#4CAF50" />
-
                         ) : (
                           <View style={styles.circle} />
-
                         )}
-                        {index < jobStatus.length - 1 && (
+                        {status !== jobStatus[jobStatus.length - 1] && (
                           <View style={styles.verticalLine} />
                         )}
                       </View>
@@ -173,16 +117,14 @@ const JobDetailsScreen: React.FC<JobDetailsScreenProps> = ({ route }) => {
                   No status history available!
                 </Text>
               )}
-
             </View>
           </View>
         )}
       </ScrollView>
       <View style={{ height: 20 }} />
-      {/* Footer outside ScrollView */}
       <View style={styles.footer}>
         <TouchableOpacity
-          style={[styles.button]}
+          style={[styles.button, styles.viewJobButton]}
           onPress={() => {
             console.log('Navigating to JobDetails with job:', job);
             navigation.navigate('ViewJobDetails', { job });
@@ -199,9 +141,10 @@ const JobDetailsScreen: React.FC<JobDetailsScreenProps> = ({ route }) => {
         </TouchableOpacity>
       </View>
     </View>
-
   );
 };
+
+
 
 const styles = StyleSheet.create({
   container: {
@@ -228,8 +171,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     margin: 2,
     marginBottom: 6,
-
-
+ 
+ 
   },
   oval: {
     flexDirection: 'row',
@@ -256,11 +199,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   tag: {
-
+ 
     color: 'black',
     paddingVertical: 4,
     paddingHorizontal: 8,
-
+ 
     marginRight: 3,
     marginBottom: 8,
     fontSize: 11,
@@ -269,13 +212,13 @@ const styles = StyleSheet.create({
   locationContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: -10
+    marginTop:-10
   },
   locationIcon: {
     width: 11,
     height: 12,
     marginRight: 6,
-
+    
   },
   locationText: {
     fontSize: 11,
@@ -413,46 +356,52 @@ const styles = StyleSheet.create({
   },
   footer: {
     backgroundColor: '#fff',
-    paddingVertical: 7, // Adjust padding for better spacing
+    paddingVertical: 10, // Adjust padding for better spacing
     paddingHorizontal: 16,
     padding: 13,
     flexDirection: 'row',
     position: 'absolute',
     bottom: 0,
     width: '100%',
-
+ 
   },
-
+ 
   button: {
-    paddingVertical: 12,
-    paddingHorizontal: 4,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
     borderRadius: 8,
     alignItems: 'center',
     flex: 1,
     marginHorizontal: 8,
-
   },
-
+  saveJobButton: {
+    backgroundColor: 'white',
+    borderWidth: 1,
+    borderColor: '#FF9800',
+  },
+  saveJobText: {
+    color: '#FF9800',
+    fontSize: 16,
+    fontFamily: 'Plus Jakarta Sans',
+  },
   viewJobText: {
     color: 'white',
     fontSize: 16,
     fontFamily: 'PlusJakartaSans-Bold',
-
-    
-
   },
-
+  viewJobButton: {
+ 
+  },
   applyButtonGradient: {
     borderRadius: 10,
     flex: 1,
     width: '100%',
-    height:height*0.075,
-    padding: 20,
-    alignItems: 'center',
+    padding: 20
   },
-
-
+ 
+ 
 });
-
+ 
 export default JobDetailsScreen;
-
+ 
+ 

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import API_BASE_URL from '../API_Service';
+import {API_BASE_URL} from '@env';
 // Create Axios instance
 const apiClient = axios.create({
   baseURL: API_BASE_URL,

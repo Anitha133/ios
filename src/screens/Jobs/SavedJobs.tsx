@@ -1,25 +1,24 @@
- 
 import React, { useState, useCallback } from 'react';
 import { FlatList, ActivityIndicator, View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
-import { useSavedJobs } from '../../services/Jobs/SavedJob';
-import { JobData1 } from '../../models/Jobs/SavedJob';
+import { useSavedJobs } from '@services/Jobs/SavedJob';
+import { JobData1 } from '@models/Model';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../../../New';
+import { RootStackParamList } from '@models/Model';
 import { SafeAreaView } from 'react-native-safe-area-context';
-
+ 
 const SavedJobs = () => {
   const { savedJobs, loading, error, fetchSavedJobs } = useSavedJobs(); // Assuming `fetchSavedJobs` is available to manually trigger data fetch
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList, 'SavedJobs'>>();
   const [reload, setReload] = useState(false); // Reload state
-
+ 
   // Automatically reload data when the screen is focused
   useFocusEffect(
     useCallback(() => {
       fetchSavedJobs(); // Trigger a reload of the saved jobs data
     }, [reload]) // Dependency ensures fresh data each time
   );
-
+ 
   if (loading) {
     return (
       <View style={styles.loader}>
@@ -27,11 +26,11 @@ const SavedJobs = () => {
       </View>
     );
   }
-
+ 
   if (error || savedJobs.length === 0) {
     return <Text style={styles.placeholderText}>No saved jobs available!</Text>;
   }
-
+ 
   const monthNames = [
     'January', 'February', 'March', 'April', 'May', 'June',
     'July', 'August', 'September', 'October', 'November', 'December'
@@ -40,7 +39,7 @@ const SavedJobs = () => {
     const [year, month, day] = dateArray;
     return `${monthNames[month - 1]} ${day}, ${year}`;
   };
-
+ 
     const handleJobPress = (job: JobData1) => {
       navigation.navigate('SavedDetails', { job });
     };
@@ -102,7 +101,7 @@ const SavedJobs = () => {
             </TouchableOpacity>
           </View>
   );
-
+ 
   return (
     <View style={styles.container}>
           {loading && <ActivityIndicator size="large" color="#FF8C00" />}

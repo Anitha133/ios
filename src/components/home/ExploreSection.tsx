@@ -1,19 +1,20 @@
-import React from "react";
-import { View, Text, Image, ScrollView, StyleSheet, Dimensions, TouchableOpacity,Linking } from "react-native";
-import LinearGradient from 'react-native-linear-gradient';
+import React, { useContext } from "react";
+import { View, Text, Image, ScrollView, StyleSheet, Dimensions, TouchableOpacity, Linking } from "react-native";
+import GradientButton from "../styles/GradientButton";
 import { useNavigation } from "@react-navigation/native";
-import { RootStackParamList } from '../../../New';
+import { RootStackParamList } from '@models/Model';
+import UserContext from "../../context/UserContext";
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-
-
+ 
+ 
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'Badges'>;
-
-interface ExploreSectionProps {
-  navigateToBadge: () => void; // Prop to handle navigation to Badge screen
-}
+ 
 const ExploreSection = () => {
+  const { verifiedStatus } = useContext(UserContext)
   const navigation = useNavigation<NavigationProp>();
+ 
+ 
   return (
     <View>
       <Text style={styles.textBelowCard}>Explore</Text>
@@ -28,74 +29,51 @@ const ExploreSection = () => {
             source={{ uri: "https://d1sq67t1c2pewz.cloudfront.net/static/media/Resume.ec41b4fde8cfb61ed302.png" }}
             style={styles.cardImage}
           />
-          <TouchableOpacity
-            onPress={() => { navigation.navigate('ResumeBuilder') }} // Use the navigateToBadge function here
-            style={styles.touchableContainer}
-          >
-            <LinearGradient
-              colors={['#F97316', '#FAA729']}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 0 }}
-              style={styles.cardButton}
-            >
-              {/* Ensure Text is wrapped correctly */}
-              <Text style={styles.buttonText}>Create Now</Text>
-            </LinearGradient>
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.largeCard}>
-          <View style={{borderColor:'red',borderRadius:10,borderWidth:1.5,paddingHorizontal:5,marginLeft:'80%'}}>
-            <Text style={{fontFamily:"PlusJakartaSans-Medium",color:'red',fontSize:12}}>New</Text>
-          </View>
-          <Text style={styles.cardTitle}>Earn Pre-Screened{"\n"}             Badge</Text>
-          <Image
-            source={{ uri: "https://d1sq67t1c2pewz.cloudfront.net/static/media/Taketest.f9b04fc56b4d85d488be.png" }}
-            style={styles.cardImage}
+          <GradientButton
+            title="Create Now"
+            onPress={() => navigation.navigate('ResumeBuilder')}
+            style={styles.cardButton}
+           
           />
-          <TouchableOpacity
-            onPress={() => { navigation.navigate('Badges') }} // Use the navigateToBadge function here
-            style={styles.touchableContainer}
-          >
-            <LinearGradient
-              colors={['#F97316', '#FAA729']}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 0 }}
-              style={styles.cardButton}
-            >
-              {/* Ensure Text is wrapped correctly */}
-              <Text style={styles.buttonText}>Take Test</Text>
-            </LinearGradient>
-          </TouchableOpacity>
         </View>
-
+        {!verifiedStatus && (
+          <View style={styles.largeCard}>
+            <View style={{ borderColor: 'red', borderRadius: 10, borderWidth: 1.5, paddingHorizontal: 5, marginLeft: '80%' }}>
+              <Text style={{ fontFamily: "PlusJakartaSans-Medium", color: 'red', fontSize: 12 }}>New</Text>
+            </View>
+            <Text style={styles.cardTitle}>Earn Pre-Screened{"\n"}             Badge</Text>
+            <Image
+              source={{ uri: "https://d1sq67t1c2pewz.cloudfront.net/static/media/Taketest.f9b04fc56b4d85d488be.png" }}
+              style={styles.cardImage}
+            />
+            <GradientButton
+              title="Take Test"
+              onPress={() => navigation.navigate('Badges')}
+              style={styles.cardButton}
+             
+            />
+          </View>
+        )}
+ 
         <View style={[styles.largeCard, styles.lastCard]}>
-          <Text style={styles.cardTitle}>Get Certified on Advanced{"\n"}{"        "}Technologies</Text>
+          <Text style={styles.cardTitle}>Get Certified on Advanced{"\n"}{"                 "}Technologies</Text>
           <Image
             source={{ uri: "https://d1sq67t1c2pewz.cloudfront.net/static/media/Certificate.cf13aa641913a67cb502.png" }}
             style={styles.cardImage}
           />
-          <TouchableOpacity
-            onPress={() => Linking.openURL('https://upskill.bitlabs.in/login/index.php')}// Use the navigateToBadge function here
-            style={styles.touchableContainer}
-          >
-            <LinearGradient
-              colors={['#F97316', '#FAA729']}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 0 }}
-              style={styles.cardButton}
-            >
-              {/* Ensure Text is wrapped correctly */}
-              <Text style={styles.buttonText}>Start Learning</Text>
-            </LinearGradient>
-          </TouchableOpacity>
+          <GradientButton
+            title="Start Learning"
+            onPress={() => Linking.openURL('https://upskill.bitlabs.in/login/index.php')}
+            style={styles.cardButton}
+           
+          />
         </View>
       </ScrollView>
     </View>
   );
 };
-
-
+ 
+ 
 const styles = StyleSheet.create({
   textBelowCard: {
     textAlign: "left",
@@ -170,5 +148,5 @@ const styles = StyleSheet.create({
     height: screenHeight * 0.075, // Same height as the button
   },
 });
-
+ 
 export default ExploreSection;

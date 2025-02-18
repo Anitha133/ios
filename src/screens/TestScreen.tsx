@@ -1,17 +1,28 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Modal, SafeAreaView, Dimensions, Image, BackHandler, Alert, ScrollView } from 'react-native';
-import { useAuth } from '../context/Authcontext'; // Assuming you have an auth context for JWT
-import { useFocusEffect } from '@react-navigation/native';
-import { useTestViewModel } from '../viewmodel/Test/TestViewModel'; // Import ViewModel
-import { RadioButton } from 'react-native-paper'; // Ensure this is imported for RadioButton
-import { LinearGradient } from 'react-native-linear-gradient'; // Import LinearGradient for gradient background
+import React, {useState, useEffect} from 'react';
+
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Modal,
+  SafeAreaView,
+  Dimensions,
+  Image,
+  BackHandler,
+  ScrollView,
+  AppState,
+} from 'react-native';
+
+import {useAuth} from '@context/Authcontext'; // Assuming you have an auth context for JWT
+import {useFocusEffect} from '@react-navigation/native';
+import {useTestViewModel} from '@viewmodel/Test/TestViewModel'; // Import ViewModel
+import {LinearGradient} from 'react-native-linear-gradient'; // Import LinearGradient for gradient background
 import Icon from 'react-native-vector-icons/AntDesign'; // Assuming you're using AntDesign for icons
-import Header from '../components/CustomHeader/Header';
-import { submitTestResult } from '../services/Test/testService';
-import { useSkillTestViewModel } from '../viewmodel/Test/skillViewModel';
+import Header from '@components/CustomHeader/Header';
+import {useSkillTestViewModel} from '@viewmodel/Test/skillViewModel';
 import NetInfo from '@react-native-community/netinfo';
-import { decode } from "html-entities";
-import { AppState } from 'react-native';
+import {decode} from 'html-entities';
  
 const { width,height } = Dimensions.get('window');
  

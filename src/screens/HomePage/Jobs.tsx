@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import {
   StyleSheet,
   Text,
@@ -7,24 +7,26 @@ import {
   ActivityIndicator,
   Image,
   FlatList,
+  SafeAreaView
 } from 'react-native';
-import { useNavigation, useIsFocused } from '@react-navigation/native';
+import { useNavigation, useIsFocused, useRoute, RouteProp } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { RootStackParamList } from '../../../New'; // Import navigation types
+import { RootStackParamList } from '@models/Model'; // Import navigation types
 import AppliedJobs from '../Jobs/AppliedJobs';
 import SavedJobs from '../Jobs/SavedJobs';
-import useRecommendedJobsViewModel from '../../viewmodel/jobs/RecommendedJobs'; // Your ViewModel
-import { JobData } from '../../models/Jobs/ApplyJobmodel'; // Your JobData interface
-import { useRoute, RouteProp } from '@react-navigation/native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import useRecommendedJobsViewModel from '@viewmodel/jobs/RecommendedJobs'; // Your ViewModel
+import { JobData } from '@models/Model'; // Your JobData interface
+
+import UserContext from '@context/UserContext';
  
+
 // Navigation prop type for RecommendedJobs
 type RecommendedJobsNavigationProp = StackNavigationProp<RootStackParamList, 'JobDetails'>;
 type JobsRouteProp = RouteProp<RootStackParamList, 'Jobs'>;
  
 const RecommendedJobs = () => {
   const route = useRoute<JobsRouteProp>(); // Specify the route type
-  const { tab = 'recommended' } = route.params || {}; // Now TypeScript knows about 'tab'
+  //const { tab = 'recommended' } = route.params || {}; // Now TypeScript knows about 'tab'
   const { jobs, loading, reloadJobs } = useRecommendedJobsViewModel(); // Assuming jobs are passed from view model
   const [activeTab, setActiveTab] = useState<'recommended' | 'applied' | 'saved'>('recommended');
   const navigation = useNavigation<RecommendedJobsNavigationProp>();
@@ -32,7 +34,9 @@ const RecommendedJobs = () => {
   const [savedJobs, setSavedJobs] = useState<JobData[]>([]); // State to store saved jobs
   const isFocused = useIsFocused();
   const [visibleJobsCount, setVisibleJobsCount] = useState(10); // Number of jobs to display initially
- 
+  const {isJobsLoaded,setIsJobsLoaded} = useContext(UserContext);
+  const [isInitialLoad, setIsInitialLoad] = useState(isJobsLoaded);
+
   useEffect(() => {
     if (route.params?.tab) {
       setActiveTab(route.params.tab); // Set the active tab from the passed parameter
@@ -40,10 +44,21 @@ const RecommendedJobs = () => {
   }, [route.params?.tab]);
  
   useEffect(() => {
-    if (isFocused && activeTab === 'recommended') {
-      reloadJobs(); // Reload jobs when the screen is focused and tab is 'recommended'
+    if (!isJobsLoaded) {
+      reloadJobs();  // Reload jobs only when `isJobsLoaded` is false
+      setIsJobsLoaded(true);  // Mark as loaded after fetching
     }
-  }, [isFocused, activeTab]);
+  }, [isJobsLoaded]);
+// To reload in recommended jobs only if focus is on recommende djobs even a reload happens at saved jobs.
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     if (activeTab==='recommended' && !isJobsLoaded) {
+  //       reloadJobs();
+  //       setIsJobsLoaded(true);
+  //     }
+  //   }, [isJobsLoaded, reloadJobs, setIsJobsLoaded])
+  // );
+  
  
   // Handle tab press
   const handleTabPress = (tab: 'recommended' | 'applied' | 'saved') => {
@@ -61,7 +76,7 @@ const RecommendedJobs = () => {
   // Load more jobs when the user scrolls to the bottom
   const loadMoreJobs = () => {
     if (visibleJobsCount < jobs.length) {
-      setVisibleJobsCount(visibleJobsCount + 10); // Load 10 more jobs
+      setVisibleJobsCount(visibleJobsCount + 16); // Load 10 more jobs
     }
   };
  
@@ -105,7 +120,7 @@ const RecommendedJobs = () => {
  
             <View style={{ flexDirection: 'row', alignItems: 'center', marginRight: 10,marginTop:1}}>
               <View style={{ flexDirection: 'row', alignItems: 'center', }}>
-                <Text style={{fontSize:13}}>₹ </Text>
+               <Text style={{ fontSize: 13 }}>{"\u20B9"}</Text>
                 <Text style={styles.ovalText}>{item.minSalary.toFixed(2)} - {item.maxSalary.toFixed(2)} LPA  </Text>
                 <Text style={{color:'#E2E2E2',fontFamily: 'PlusJakartaSans-Bold'}}>   |</Text>
               </View>
@@ -197,7 +212,7 @@ const RecommendedJobs = () => {
               activeTab === 'recommended' && styles.activeTabText,
             ]}
           >
-            Recommended Jobs
+            Recommended
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
@@ -210,7 +225,7 @@ const RecommendedJobs = () => {
               activeTab === 'applied' && styles.activeTabText,
             ]}
           >
-            Applied Jobs
+            Applied
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
@@ -223,7 +238,7 @@ const RecommendedJobs = () => {
               activeTab === 'saved' && styles.activeTabText,
             ]}
           >
-            Saved Jobs
+            Saved
           </Text>
         </TouchableOpacity>
       </View>

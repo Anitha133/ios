@@ -6,11 +6,8 @@ import { JobAlert } from '../../services/Alert/NotificationServieces'; // Import
 import { useAuth } from '../../context/Authcontext';
 import { useNavigation } from '@react-navigation/native';
 import { useJobViewModel } from '../../viewmodel/Alert/navigationModel';
-import JobDetailsScreen from '../Jobs/JobDetailsScreen';
-import jobs from '../../screens/Jobs/AppliedJobs';
-import { fetchJobDetails } from '../../services/Alert/NotificationServieces';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../../../New';
+import { RootStackParamList } from '@models/Model';
 
 
 const NotificationsPage: React.FC = () => {

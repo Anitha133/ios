@@ -1,4 +1,4 @@
-package com.bitlabs_ios
+package com.bitLabs_ios
 
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate

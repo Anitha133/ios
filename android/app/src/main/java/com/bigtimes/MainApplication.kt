@@ -1,4 +1,4 @@
-package com.bitlabs_ios
+package com.bitLabs_ios
 
 import android.app.Application
 import com.facebook.react.PackageList

@@ -1,36 +1,35 @@
 // LogoutModal.tsx
-import React from 'react';
+import React, { useContext } from 'react';
 import { Modal, View, Text, TouchableOpacity, StyleSheet,Dimensions } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 import LinearGradient from 'react-native-linear-gradient';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import UserContext from '@context/UserContext';
 
 interface LogoutModalProps {
   visible: boolean;
   onCancel: () => void;
   onConfirm: () => void;
-
 }
 const { width,height } = Dimensions.get('window');
 const LogoutModal: React.FC<LogoutModalProps> = ({ visible, onCancel, onConfirm }) => {
+
+  //reset the total data while logout to ensure no credentilas left in authcontext
+  const {reset} = useContext(UserContext)
   return (
     <Modal
       visible={visible}
       transparent={true}
       animationType="slide"
-      
     >
-    
       <View style={styles.modalBackground}>
         <View style={styles.modalContainer}>
           <Text style={styles.modalTitle}>
             Are you sure you want to{"\n"}logout?
           </Text>
           <View style={styles.modalButtons}>
-            <TouchableOpacity onPress={onCancel} style={[styles.modalButton, styles.cancelButton]}>
+            <TouchableOpacity onPress={()=>{onCancel();reset();}} style={[styles.modalButton, styles.cancelButton]}>
               <Text style={[styles.buttonText, { color: '#F46F16' }]}>Cancel</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={onConfirm} style={[styles.modalButton]}>
+            <TouchableOpacity onPress={()=>{onConfirm()}} style={[styles.modalButton]}>
               <LinearGradient
                 colors={['#F46F16', '#F8A44C']}
                 style={styles.gradientButton}
@@ -41,7 +40,6 @@ const LogoutModal: React.FC<LogoutModalProps> = ({ visible, onCancel, onConfirm 
           </View>
         </View>
       </View>
-      
     </Modal>
   );
 };
@@ -104,5 +102,4 @@ const styles = StyleSheet.create({
     fontFamily: 'PlusJakartaSans-Bold',
   },
 });
-
 export default LogoutModal;
