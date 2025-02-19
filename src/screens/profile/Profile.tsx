@@ -154,7 +154,7 @@ function ProfileComponent() {
                                         <Text style={[styles.name, { textAlign: 'center', alignSelf: 'center' }]}>
                                             {`${basicDetails?.firstName || ''} ${basicDetails?.lastName || ''}`.trim()}
                                         </Text>
-                                        {verified && <Icon1 name="verified" size={25} color="#334584" style={{ marginLeft: 5 }} />}
+                                        {verified && <Icon1 name="verified" size={25} color="#F46F16" style={{ marginLeft: 5 }} />}
 
                                     </View>
 
@@ -352,28 +352,28 @@ function ProfileComponent() {
                             >
 
                                 <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', alignItems: 'center' }}>
-                                    
-                                        <View style={{ width: '90%', height: '80%', backgroundColor: 'white', borderRadius: 10, overflow: 'hidden' }}>
-                                            {/* Close Button */}
-                                            <TouchableOpacity
-                                                style={{
-                                                    position: 'absolute',
-                                                    right: 10,
-                                                    top: 10,
-                                                    zIndex: 1, // Ensure it's above the PDF
-                                                    backgroundColor: 'rgba(255,255,255,0.7)', // Optional: Light background for visibility
-                                                    padding: 5,
-                                                    borderRadius: 20,
-                                                }}
-                                                onPress={() => setresumedisplay(false)}
-                                            >
-                                                <Icon1 name="close" size={20} color="#000" />
-                                            </TouchableOpacity>
 
-                                            {/* PDF Viewer */}
-                                            <PDFExam />
-                                        </View>
-                                  
+                                    <View style={{ width: '90%', height: '80%', backgroundColor: 'white', borderRadius: 10, overflow: 'hidden' }}>
+                                        {/* Close Button */}
+                                        <TouchableOpacity
+                                            style={{
+                                                position: 'absolute',
+                                                right: 10,
+                                                top: 10,
+                                                zIndex: 1, // Ensure it's above the PDF
+                                                backgroundColor: 'rgba(255,255,255,0.7)', // Optional: Light background for visibility
+                                                padding: 5,
+                                                borderRadius: 20,
+                                            }}
+                                            onPress={() => setresumedisplay(false)}
+                                        >
+                                            <Icon1 name="close" size={20} color="#000" />
+                                        </TouchableOpacity>
+
+                                        {/* PDF Viewer */}
+                                        <PDFExam />
+                                    </View>
+
                                 </View>
 
 
@@ -598,6 +598,7 @@ const styles = StyleSheet.create({
         borderRadius: 15,
         marginRight: 8,
         marginBottom: 5,
+        marginVertical: 5, // Space between rows
 
     },
 
@@ -631,10 +632,10 @@ const styles = StyleSheet.create({
 
     },
     skillContainer: {
-        alignItems: 'center',
+        alignItems: 'center',  // Centers items vertically
         marginTop: 5,
         flexDirection: 'row',
-        flexWrap: 'wrap',
+        flexWrap: 'wrap', // Allows multiple lines
     },
     skillcolor: {
         height: 30,

@@ -1,8 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { StyleSheet, Dimensions, View, Text, TouchableOpacity, Image } from 'react-native';
 import { useAuth } from '@context/Authcontext';
-import API_BASE_URL from '@services/API_Service';
-import { useFocusEffect } from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
 import Resumebanner from '@assests/icons/Resumebanner';
 import { SafeAreaView } from 'react-native-safe-area-context';

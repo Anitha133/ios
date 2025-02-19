@@ -240,8 +240,11 @@ const Step3: React.FC = ({route, navigation}: any) => {
           <GradientButton
             title="Save"
             onPress={() => {
+             
               handleSaveResume();
+              if(resumeFile){
               handleAPI();
+              }
             }}
             style={[
               ...(isUploadComplete ? [{backgroundColor: '#D7D6D6'}] : []), // Apply background color only if true
@@ -322,7 +325,6 @@ const styles = StyleSheet.create({
     marginBottom: 55,
   },
   screen: {
-    flex: 1,
     backgroundColor: '#f5f5f5',
     alignItems: 'center',
     justifyContent: 'flex-start',
@@ -423,7 +425,6 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    paddingVertical: 15,
     borderTopColor: '#ccc',
   },
   buttonContainer: {

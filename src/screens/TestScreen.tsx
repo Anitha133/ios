@@ -248,6 +248,9 @@ const TestScreen = ({ route, navigation }: any) => {
       case 'MySQL':
         fetchedTestData = require('../models/data/SQL.json');
         break;
+      case 'Vue':
+        fetchedTestData = require('../models/data/Vue.json');
+        break;
       default:
         console.error(`No data found for test: ${testName}`);
         return;
@@ -744,6 +747,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 10,
     marginVertical: 5, // Space between options
+    marginRight:5
    
   },
 });
