@@ -522,6 +522,7 @@ const Badge = ({ navigation }: any) => {
                               name="external-link"
                               size={20}
                               color="white"
+                              style={{marginRight:10}}
                             />
                           </TouchableOpacity>
                         </View>

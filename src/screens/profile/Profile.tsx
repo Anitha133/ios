@@ -472,7 +472,7 @@ function ProfileComponent() {
                                                     </View>
                                                 )}
                                             </View>
-                                            <View>
+                                            {/* <View>
                                                 <View style={[styles.orContainer, { marginTop: 20, marginVertical: 20 }]}>
                                                     <View style={styles.line}></View>
                                                     <Text style={{ marginTop: -12, fontWeight: '600', fontFamily: 'PlusJakartaSans-Bold' }}> Or </Text>
@@ -486,7 +486,7 @@ function ProfileComponent() {
                                                 >
                                                     <Text style={{ color: '#FFFFFF', fontFamily: 'PlusJakartaSans-Bold' }}>Create Resume</Text>
                                                 </TouchableOpacity>
-                                            </View>
+                                            </View> */}
                                             <TouchableOpacity
                                                 style={[styles.buttonContent, { alignItems: 'flex-end', marginBottom: 10 }]}
                                                 onPress={handleSaveResume}
@@ -564,6 +564,7 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
+        marginTop:10 //remove later
     },
 
     uploadButton: {

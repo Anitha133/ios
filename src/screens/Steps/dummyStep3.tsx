@@ -202,7 +202,7 @@ const Step3: React.FC = ({route, navigation}: any) => {
                       styles.orContainer,
                       {marginTop: -26, marginVertical: 20},
                     ]}>
-                    <View style={styles.line}></View>
+                    {/* <View style={styles.line}></View>
                     <Text
                       style={{
                         marginTop: -12,
@@ -211,13 +211,13 @@ const Step3: React.FC = ({route, navigation}: any) => {
                       }}>
                       {' '}
                       Or{' '}
-                    </Text>
+                    </Text> */}
                     <View style={[styles.line, {marginLeft: 3}]}></View>
                   </View>
                 )}
               </View>
 
-              <View>
+              {/* <View>
                 <TouchableOpacity
                   style={styles.uploadButton}
                   onPress={() => navigation.navigate('ResumeBuilder')}>
@@ -229,7 +229,7 @@ const Step3: React.FC = ({route, navigation}: any) => {
                     Create Resume
                   </Text>
                 </TouchableOpacity>
-              </View>
+              </View> */}
             </View>
           </View>
         </View>

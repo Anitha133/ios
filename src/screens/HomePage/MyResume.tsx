@@ -26,38 +26,7 @@ const PDFExample = () => {
   const [loading, setLoading] = useState(true);
   const navigation = useNavigation<NavigationProp>();
 
-  // const fetchPdf = async () => {
-  //   try {
-  //     setLoading(true);
-  //     const response = await fetch(`${API_BASE_URL}/resume/pdf/${userid.userId}`);
-  //     const arrayBuffer = await response.arrayBuffer();
-  //     const base64Pdf = arrayBufferToBase64(arrayBuffer);
-  //     const pdfUri = `data:application/pdf;base64,${base64Pdf}`;
-  //     setPdfUri1(pdfUri);
-  //   } catch (error) {
-  //     setError('Error fetching PDF');
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
 
-  // // Helper function to convert ArrayBuffer to Base64
-  // const arrayBufferToBase64 = (buffer: ArrayBuffer) => {
-  //   let binary = '';
-  //   const bytes = new Uint8Array(buffer);
-  //   for (let i = 0; i < bytes.byteLength; i++) {
-  //     binary += String.fromCharCode(bytes[i]);
-  //   }
-  //   return btoa(binary);
-  // };
-
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     fetchPdf();
-  //   }, [userid.userId])
-  // );
-
-  //Auto-refresh PDF every 10 seconds
 
 
   const downloadFile = async () => {
@@ -113,7 +82,7 @@ const PDFExample = () => {
         <Text style={styles.title}>My Resume</Text>
       </View>
       <View style={styles.container}>
-        <LinearGradient
+        {/* <LinearGradient
           colors={['#FAA428', '#F97316']}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }} // 90-degree (horizontal) gradient
@@ -127,13 +96,14 @@ const PDFExample = () => {
           <View>
             <Resumebanner width={130} height={130} />
           </View>
-        </LinearGradient>
+        </LinearGradient> */}
         <View style={styles.pdfContainer}>
-          <TouchableOpacity onPress={downloadFile} style={styles.downloadButton}>
-            <Image source={require('../../assests/Images/download.png')} style={styles.downloadIcon} />
-          </TouchableOpacity>
+
           <PDFExam />
         </View>
+        <TouchableOpacity onPress={downloadFile} style={styles.downloadButton}>
+            <Image source={require('../../assests/Images/download.png')} style={styles.downloadIcon} />
+          </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
@@ -217,11 +187,12 @@ const styles = StyleSheet.create({
   downloadButton: {
     position: 'absolute',
     bottom: 10, // Adjust as needed
-    right: 10, // Adjust as needed
+    right: 20, // Adjust as needed
     backgroundColor: 'rgba(255, 255, 255, 0.8)',
     padding: 10,
+
     borderRadius: 50,
-    marginRight: 1,
+    //marginRight: 10,
   },
   downloadIcon: {
     width: 30,
